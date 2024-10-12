@@ -1,6 +1,5 @@
 ---
-import type { Locales } from 'astro';
-import cfg from '@/../astro.config.mjs';
+import { siteDescription, siteLocales, siteName } from '@/config';
 
 // Types
 type Props = {
@@ -12,19 +11,12 @@ type Props = {
 // Injects
 const { title, description, image } = Astro.props;
 
-// Constants
-const siteName: string = 'Lirakira Lyrics';
-const siteDescription: string =
-  'Marumaru唱歌学日语的开源替代 | Marumaru唱歌學日語的開源替代';
-
 // Computes
 const displayTitle: string = title ? `${title} - ${siteName}` : siteName;
 
-const alternateLocales: string[] = cfg
-  .i18n!.locales!.flatMap((loc: Locales[0]): string[] =>
-    typeof loc === 'string' ? [loc] : loc.codes
-  )
-  .filter((loc: string): boolean => loc !== Astro.currentLocale);
+const alternateLocales: string[] = siteLocales.filter(
+  (loc: string): boolean => loc !== Astro.currentLocale
+);
 ---
 
 <html lang={Astro.currentLocale}>

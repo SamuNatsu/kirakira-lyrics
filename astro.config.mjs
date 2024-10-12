@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import { resolve } from 'node:path';
 
+import { siteLocales } from './src/config';
+
 // Integrations
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
@@ -10,7 +12,7 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   i18n: {
     defaultLocale: 'zh-CN',
-    locales: ['zh-CN', 'zh-TW'],
+    locales: siteLocales,
     routing: {
       prefixDefaultLocale: true,
       redirectToDefaultLocale: true
