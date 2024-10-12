@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kirakira-lyrics.github.io/sitemap-index.xml
