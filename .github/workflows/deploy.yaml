@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'kirakira-lyrics/website' }}
+    if: ${{ github.repository == 'kirakira-lyrics/kirakira-lyrics.github.io' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
