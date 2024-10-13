@@ -19,6 +19,9 @@ const artistCollection = defineCollection({
     name: z.string(),
     name_zhcn: z.string().optional(),
     name_zhtw: z.string().optional(),
+    name_alts: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+    home_page: z.string().url().optional(),
     img: z.string().optional()
   })
 });
@@ -30,7 +33,7 @@ const songCollection = defineCollection({
     title_zhcn: z.string().optional(),
     title_zhtw: z.string().optional(),
     artists: z.array(reference('artists')),
-    album: reference('albums'),
+    album: reference('albums').optional(),
     img: z.string().optional()
   })
 });

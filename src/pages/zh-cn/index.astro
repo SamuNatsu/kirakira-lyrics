@@ -1,0 +1,23 @@
+---
+// Layouts
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+// Components
+import Search from 'astro-pagefind/components/Search';
+import { Icon } from 'astro-icon/components';
+---
+
+<BaseLayout class="bg-blue-50" data-pagefind-ignore>
+  <main class="flex flex-col gap-12 items-center max-w-[900px] mt-32 mx-auto">
+    <div class="flex gap-2 items-center select-none">
+      <Icon name="logo" class="text-4xl" />
+      <h1 class="font-bold leading-none text-3xl">Kirakira Lyrics</h1>
+    </div>
+    <div class="self-stretch">
+      <p class="italic select-none text-neutral-500 text-right text-sm">
+        输入 日文/中文 搜索 <b>歌曲</b> / <b>艺术家</b> / <b>专辑</b>
+      </p>
+      <Search className="mt-1 w-full" />
+    </div>
+  </main>
+</BaseLayout>

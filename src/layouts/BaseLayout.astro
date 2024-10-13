@@ -3,13 +3,14 @@ import { siteDescription, siteLocales, siteName } from '@/config';
 
 // Types
 type Props = {
+  class?: string;
   title?: string;
   description?: string;
   image?: string;
 };
 
 // Injects
-const { title, description, image } = Astro.props;
+const { class: classNames, title, description, image, ...rest } = Astro.props;
 
 // Computes
 const displayTitle: string = title ? `${title} - ${siteName}` : siteName;
@@ -42,7 +43,7 @@ const alternateLocales: string[] = siteLocales.filter(
     <meta name="og:url" content={Astro.url} />
     {image && <meta name="og:image" content={image} />}
   </head>
-  <body>
+  <body class={classNames} {...rest}>
     <slot />
   </body>
 </html>
