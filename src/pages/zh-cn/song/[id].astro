@@ -1,0 +1,112 @@
+---
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getImageFromAlias } from '@/utils/image';
+import { Image } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+// Path function
+export const getStaticPaths = (async () => {
+  const songs: CollectionEntry<'songs'>[] = await getCollection('songs');
+
+  return songs.map((song: CollectionEntry<'songs'>) => ({
+    params: { id: Number(song.id.split('_', 1)[0]) },
+    props: { song }
+  }));
+}) satisfies GetStaticPaths;
+
+// Components
+import { Icon } from 'astro-icon/components';
+
+// Injects
+const { song } = Astro.props;
+
+// Constants
+const titles: string[] = [
+  song.data.title_zhcn,
+  ...(song.data.title_alts ?? [])
+].filter((v: string | undefined): boolean => typeof v === 'string') as string[];
+
+const artists: CollectionEntry<'artists'>[] = await Promise.all(
+  song.data.artists.map(
+    ({ collection, id }): Promise<CollectionEntry<'artists'>> =>
+      getEntry(collection, id)
+  )
+);
+
+// Functions
+const parseJapaneseLyrics = (raw: string): string => {
+  const inner: string = raw.replaceAll(
+    /\((.*?)\)\[(.*?)\]/g,
+    '<span><span data-kana>$2</span><span data-kanji>$1</span></span>'
+  );
+  return `<p lang="jp">${inner}</p>`;
+};
+---
+
+<BaseLayout class="bg-red-50" title={song.data.title}>
+  <main
+    class="flex flex-col gap-8 max-w-[900px] my-24 mx-4 lg:mx-auto"
+    data-pagefind-body>
+    <a
+      href={getRelativeLocaleUrl('zh-cn', '/')}
+      class="flex gap-2 items-center select-none w-fit"
+      data-pagefind-ignore>
+      <Icon name="logo" class="text-4xl" />
+      <h1 class="font-bold leading-none text-3xl">Kirakira Lyrics</h1>
+    </a>
+    <div
+      class="bg-white flex flex-col gap-4 items-center overflow-hidden rounded-lg sm:flex-row sm:pr-4">
+      {
+        song.data.img!.startsWith('@') ? (
+          <Image
+            alt={song.data.title}
+            class="w-full lg:w-1/5 sm:w-[200px]"
+            src={getImageFromAlias(song.data.img!)}
+          />
+        ) : (
+          <Image
+            alt={song.data.title}
+            class="w-full lg:w-1/5 sm:w-[200px]"
+            src={song.data.img!}
+            inferSize
+          />
+        )
+      }
+      <div class="pb-4 px-4 sm:pb-4 sm:px-0">
+        <h1 class="font-bold text-xl" lang="jp" data-pagefind-meta="title">
+          {song.data.title}
+        </h1>
+        <h2 class="italic text-neutral-500 text-sm">{titles.join(', ')}</h2>
+        <p class="mt-4">
+          {artists.map(({ data }): string => data.name).join(', ')}
+        </p>
+        <p class="mt-4">{song.data.tags?.join(', ')}</p>
+      </div>
+    </div>
+    <div class="bg-white flex flex-col gap-8 overflow-hidden p-4 rounded-lg">
+      {
+        song.data.lyrics.map(({ jp, zhcn }) => (
+          <div>
+            <Fragment set:html={parseJapaneseLyrics(jp)} />
+            <p class="italic text-neutral-400 text-sm">{zhcn}</p>
+          </div>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style is:global>
+  p[lang='jp'] {
+    > span {
+      @apply align-bottom flex-col inline-flex items-center hover:bg-red-50;
+
+      > [data-kana] {
+        @apply leading-none text-xs;
+      }
+    }
+  }
+</style>

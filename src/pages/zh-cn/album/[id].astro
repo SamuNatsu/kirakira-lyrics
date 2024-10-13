@@ -1,0 +1,81 @@
+---
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getImageFromAlias } from '@/utils/image';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+// Path function
+export const getStaticPaths = (async () => {
+  const albums: CollectionEntry<'albums'>[] = await getCollection('albums');
+
+  return albums.map((album: CollectionEntry<'albums'>) => ({
+    params: { id: Number(album.id.split('_', 1)[0]) },
+    props: { album }
+  }));
+}) satisfies GetStaticPaths;
+
+// Components
+import { Icon } from 'astro-icon/components';
+import { getEntry } from 'astro:content';
+
+// Injects
+const { album } = Astro.props;
+
+// Constants
+const titles: string[] = [
+  album.data.title_zhcn,
+  ...(album.data.title_alts ?? [])
+].filter((v: string | undefined): boolean => typeof v === 'string') as string[];
+
+const artists: CollectionEntry<'artists'>[] = await Promise.all(
+  album.data.artists.map(
+    ({ collection, id }): Promise<CollectionEntry<'artists'>> =>
+      getEntry(collection, id)
+  )
+);
+---
+
+<BaseLayout class="bg-red-50" title={album.data.title}>
+  <main
+    class="flex flex-col gap-8 max-w-[900px] mt-24 mx-4 lg:mx-auto"
+    data-pagefind-body>
+    <a
+      href={getRelativeLocaleUrl('zh-cn', '/')}
+      class="flex gap-2 items-center select-none w-fit"
+      data-pagefind-ignore>
+      <Icon name="logo" class="text-4xl" />
+      <h1 class="font-bold leading-none text-3xl">Kirakira Lyrics</h1>
+    </a>
+    <div
+      class="bg-white flex flex-col gap-4 items-center overflow-hidden rounded-lg sm:flex-row sm:pr-4">
+      {
+        album.data.img!.startsWith('@') ? (
+          <Image
+            alt={album.data.title}
+            class="w-full lg:w-1/5 sm:w-[200px]"
+            src={getImageFromAlias(album.data.img!)}
+          />
+        ) : (
+          <Image
+            alt={album.data.title}
+            class="w-full lg:w-1/5 sm:w-[200px]"
+            src={album.data.img!}
+            inferSize
+          />
+        )
+      }
+
+      <div class="pb-4 px-4 sm:pb-4 sm:px-0">
+        <h1 class="font-bold text-xl" lang="jp" data-pagefind-meta="title">
+          {album.data.title}
+        </h1>
+        <h2 class="italic text-neutral-500 text-sm">{titles.join(', ')}</h2>
+        <p class="mt-4">{artists.map(({ data }): string => data.name).join(', ')}</p>
+        <p class="mt-4">{album.data.tags?.join(', ')}</p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

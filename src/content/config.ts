@@ -8,6 +8,8 @@ const albumCollection = defineCollection({
     title: z.string(),
     title_zhcn: z.string().optional(),
     title_zhtw: z.string().optional(),
+    title_alts: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
     artists: z.array(reference('artists')),
     img: z.string().optional()
   })
@@ -32,9 +34,19 @@ const songCollection = defineCollection({
     title: z.string(),
     title_zhcn: z.string().optional(),
     title_zhtw: z.string().optional(),
+    title_alts: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
     artists: z.array(reference('artists')),
     album: reference('albums').optional(),
-    img: z.string().optional()
+    img: z.string().optional(),
+    lyrics: z.array(
+      z.object({
+        jp: z.string(),
+        zhcn: z.string().optional(),
+        zhtw: z.string().optional(),
+        time: z.number().int().min(0).optional()
+      })
+    )
   })
 });
 
