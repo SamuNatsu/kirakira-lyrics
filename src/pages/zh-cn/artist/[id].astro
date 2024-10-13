@@ -31,18 +31,16 @@ const names: string[] = [
 ---
 
 <BaseLayout class="bg-green-50" title={artist.data.name}>
-  <main
-    class="flex flex-col gap-8 max-w-[900px] mt-24 mx-4 lg:mx-auto"
-    data-pagefind-body>
+  <main class="flex flex-col gap-8 max-w-[900px] mt-24 mx-4 lg:mx-auto">
     <a
       href={getRelativeLocaleUrl('zh-cn', '/')}
-      class="flex gap-2 items-center select-none w-fit"
-      data-pagefind-ignore>
+      class="flex gap-2 items-center select-none w-fit">
       <Icon name="logo" class="text-4xl" />
       <h1 class="font-bold leading-none text-3xl">Kirakira Lyrics</h1>
     </a>
     <div
-      class="bg-white flex flex-col gap-4 items-center overflow-hidden rounded-lg sm:flex-row sm:pr-4">
+      class="bg-white flex flex-col gap-4 items-center overflow-hidden rounded-lg sm:flex-row sm:pr-4"
+      data-pagefind-body>
       <Image
         alt={artist.data.name}
         class="w-full lg:w-1/5 sm:w-[200px]"
